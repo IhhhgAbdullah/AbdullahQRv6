@@ -37,6 +37,15 @@ jobs:
           sed -i 's/android:label="[^"]*"/android:label="QR PiX"/' android/app/src/main/AndroidManifest.xml
           sed -i 's/flutter.compileSdkVersion/36/' android/app/build.gradle.kts 2>/dev/null || true
           sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 36/' android/app/build.gradle 2>/dev/null || true
+          cat >> android/build.gradle.kts << 'GRADLE'
+          subprojects {
+              afterEvaluate {
+                  extensions.findByName("android")?.let { ext ->
+                      (ext as com.android.build.gradle.BaseExtension).compileSdkVersion(36)
+                  }
+              }
+          }
+          GRADLE
           flutter pub get
 
       - name: Build debug APK
